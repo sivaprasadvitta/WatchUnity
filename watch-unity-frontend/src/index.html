@@ -1,13 +1,19 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="utf-8">
-  <title>WatchUnityFrontend</title>
-  <base href="/">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <meta charset="utf-8" />
+  <title>WatchUnity</title>
+  <base href="/" />
+  <!-- Allow self, YouTube, and your backend in default sources -->
+  <meta http-equiv="Content-Security-Policy"
+    content="default-src 'self' https://www.youtube.com https://watchunity-backend.onrender.com; script-src 'self' https://www.youtube.com https://watchunity-backend.onrender.com; style-src 'self' 'unsafe-inline'; frame-src 'self' https://www.youtube.com;">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" type="image/x-icon" href="favicon.ico" />
 </head>
+
 <body>
   <app-root></app-root>
 </body>
+
 </html>
