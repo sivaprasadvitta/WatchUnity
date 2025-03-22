@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { io, Socket } from 'socket.io-client';
 // import { environment } from '../environments/environment';
+import { environment } from '../../environments/environment.prod';
 
 @Injectable({
   providedIn: 'root'
@@ -11,7 +12,7 @@ export class SocketService {
   videoId:string | null="";
 
   constructor() {
-    this.socket = io('https://watchunity-backend.onrender.com');
+    this.socket = io(environment.socketUrl);  //'https://watchunity-backend.onrender.com'
   }
 
   joinRoom(roomId: string) {

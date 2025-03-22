@@ -5,11 +5,11 @@ import { Server } from 'socket.io';  // <-- Use the named export "Server"
 
 const PORT = process.env.PORT || 5000;
 const app = express();
-app.use(cors({ origin: 'https://watch-unity-frontend.vercel.app/' }));
+app.use(cors({ origin: 'https://watch-unity-frontend.vercel.app' }));
 app.use(express.json());
 
 const server = http.createServer(app);
-const io = new Server(server, { cors: { origin: 'https://watch-unity-frontend.vercel.app/' } });
+const io = new Server(server, { cors: { origin: 'https://watch-unity-frontend.vercel.app' } });
 
 io.on('connection', (socket) => {
   console.log('Client connected:', socket.id);
