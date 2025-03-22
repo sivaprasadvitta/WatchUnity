@@ -12,6 +12,7 @@ import { FormsModule } from '@angular/forms';
 export class RoomPageComponent {
   userName:string='siva';
   currentVideoUrl="";
+  roomId:string='room1'
   
   
 

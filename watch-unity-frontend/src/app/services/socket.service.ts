@@ -12,7 +12,7 @@ export class SocketService {
   videoId:string | null="";
 
   constructor() {
-    this.socket = io(environment.socketUrl);  //'https://watchunity-backend.onrender.com'
+    this.socket = io('https://watchunity-backend.onrender.com');  //'https://watchunity-backend.onrender.com'
   }
 
   joinRoom(roomId: string) {

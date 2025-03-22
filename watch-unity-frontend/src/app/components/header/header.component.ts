@@ -12,6 +12,7 @@ import { NgIf } from '@angular/common';
 
 export class HeaderComponent {
   @Input() userName: string = '';
+  @Input() roomId:string= "room1"
   @Output() videoUrlChange = new EventEmitter<string>();
 
   videoUrl: string = '';
@@ -20,12 +21,16 @@ export class HeaderComponent {
   constructor(public socketService: SocketService) {}
 
   updateVideo() {
-    const videoId = this.socketService.extractVideoId(this.videoUrl.trim());
-    if (videoId) {
-      console.log('Video ID:', videoId);
-      this.videoUrlChange.emit(videoId);
-    } else {
-      this.error = 'Invalid YouTube URL!';
+    if (this.videoUrl.trim()) {
+      const videoId = this.socketService.extractVideoId(this.videoUrl.trim());
+      if (videoId) {
+        console.log('Emitting updateUrl event with videoId:', videoId);
+        this.videoUrlChange.emit(videoId);
+        this.socketService.sendVideoControl({ roomId: this.roomId, action: 'updateUrl', videoId });
+      } else {
+        console.error('Invalid YouTube URL');
+      }
     }
   }
+  
 }

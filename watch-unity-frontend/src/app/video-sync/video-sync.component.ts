@@ -19,7 +19,7 @@ export class VideoSyncComponent implements OnInit, OnDestroy, OnChanges {
   isSeeking: boolean = false;
   pollIntervalId: any;
 
-  constructor(private socketService: SocketService) {}
+  constructor(private socketService: SocketService) { }
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes['initialVideoUrl']) {
@@ -51,8 +51,11 @@ export class VideoSyncComponent implements OnInit, OnDestroy, OnChanges {
           this.player.seekTo(data.time, true);
           break;
         case 'updateUrl':
+          console.log('Received updateUrl event with videoId:', data.videoId);
           this.currentVideoId = data.videoId;
-          this.player.loadVideoById(data.videoId);
+          if (this.player) {
+            this.player.loadVideoById(data.videoId);
+          }
           break;
         default:
           break;
