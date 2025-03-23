@@ -30,6 +30,7 @@ export class PopComponent {
   onCreateRoom() {
     localStorage.setItem('adminName', this.createrName);
     this.roomService.createRoom().subscribe((generatedRoomId: string) => {
+      localStorage.setItem('isHost','true');
       localStorage.setItem('roomId', generatedRoomId);
       this.router.navigate([`/room/${generatedRoomId}`]);
     });

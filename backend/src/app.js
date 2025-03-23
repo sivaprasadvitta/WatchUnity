@@ -1,7 +1,7 @@
 import express from 'express';
 import http from 'http';
 import cors from 'cors';
-import { Server } from 'socket.io';  // <-- Use the named export "Server"
+import { Server } from 'socket.io';  
 import roomRouter from '../routers/room.router.js';
 
 const PORT = process.env.PORT || 5000;

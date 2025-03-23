@@ -12,14 +12,21 @@ import { NgIf } from '@angular/common';
 
 
 export class HeaderComponent {
-  @Input() userName: string = '';
-  @Input() roomId:string= "room1"
+  userName: string | null = '';
+  roomId:string | null= ""
   @Output() videoUrlChange = new EventEmitter<string>();
 
   videoUrl: string = '';
   error: string = '';
 
-  constructor(public socketService: SocketService) {}
+  constructor(public socketService: SocketService) {
+    
+  }
+  
+  ngOnInit(){
+    this.userName = localStorage.getItem('adminName')
+    this.roomId = localStorage.getItem('roomId');
+  }
 
   updateVideo() {
     if (this.videoUrl.trim()) {
