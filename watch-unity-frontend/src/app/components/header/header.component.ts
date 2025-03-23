@@ -25,6 +25,9 @@ export class HeaderComponent {
   
   ngOnInit(){
     this.userName = localStorage.getItem('adminName')
+    if(!this.userName){
+      this.userName = localStorage.getItem('joinerName')
+    }
     this.roomId = localStorage.getItem('roomId');
   }
 

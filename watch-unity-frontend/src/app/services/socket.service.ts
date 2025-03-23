@@ -12,7 +12,7 @@ export class SocketService {
   videoId:string | null="";
 
   constructor() {
-    this.socket = io('https://watchunity-backend.onrender.com');  //'https://watchunity-backend.onrender.com'
+    this.socket = io('https://watchunity-backend.onrender.com');  // 'http://localhost:5000'
   }
 
   joinRoom(roomId: string) {
@@ -45,6 +45,15 @@ export class SocketService {
     const match = videoUrl.match(this.regex);
     this.videoId = match && match[1] ? match[1] : null;
     return match && match[1] ? match[1] : null;
+  }
+
+  // chat
+  sendChatMessage(message: any) {
+    this.socket.emit('chatMessage', message);
+  }
+
+  onChatMessage(callback: (message: any) => void) {
+    this.socket.on('chatMessage', callback);
   }
   
 }
