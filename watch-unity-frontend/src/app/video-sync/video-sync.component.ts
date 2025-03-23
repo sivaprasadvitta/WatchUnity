@@ -99,10 +99,19 @@ export class VideoSyncComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   initPlayer() {
-    // Create the player using the current video ID
+    let playerWidth = '640';
+    let playerHeight = '390';
+    if (window.innerWidth <= 640) {
+      // For mobile, set width to full window width and calculate height based on 16:9 ratio or use window height
+      playerWidth = window.innerWidth.toString();
+      // For a 16:9 ratio:
+      playerHeight = Math.round(window.innerWidth * (9 / 16)).toString();
+   
+    }
+    
     this.player = new YT.Player('player', {
-      height: '390',
-      width: '640',
+      height: playerHeight,
+      width: playerWidth,
       videoId: this.currentVideoId,
       events: {
         onReady: this.onPlayerReady.bind(this),

@@ -7,6 +7,7 @@ import { NgIf } from '@angular/common';
   selector: 'app-header',
   imports: [FormsModule,NgIf],
   templateUrl: './header.component.html',
+  styleUrl: './header.component.css'
 })
 
 

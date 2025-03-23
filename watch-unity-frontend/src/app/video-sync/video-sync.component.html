@@ -1,43 +1,8 @@
-<div class="flex flex-col items-center space-y-4 p-4">
-    <!-- Container where the YouTube player is embedded -->
-    <div id="player" class="w-full max-w-xl rounded-lg shadow-lg"></div>
-
-    <!-- Controls for updating the video URL (optional, if you want manual override) -->
-    <div class="flex space-x-2">
-        <input #videoInput type="text" placeholder="Enter YouTube Video ID"
-            class="px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
-        <button (click)="updateVideoUrl(videoInput.value)"
-            class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition">
-            Update Video
-        </button>
-    </div>
+<!-- <div class="video-sync-container">
+    <div id="player"></div>
+  </div>
+  
+ -->
+ <div class="player-container">
+  <div id="player"></div>
 </div>
-
-
-
-
-<!-- <div class="flex flex-col items-center space-y-4 p-4">
-    <!-- Container for the YouTube player -->
-<!-- <div id="player" class="w-full max-w-xl rounded-lg shadow-lg"></div>
-
-<!-- Controls for updating video URL -->
-<!-- <div class="flex space-x-2">
-    <input #videoInput type="text" placeholder="Enter YouTube Video ID"
-        class="px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
-    <button (click)="updateVideoUrl(videoInput.value)"
-        class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition">
-        Update Video
-    </button> -->
-<!-- </div> --> -->
-
-<!-- Control for testing seek manually (for MVP testing) -->
-<!-- <div class="flex space-x-2">
-    <input #seekInput type="number" placeholder="Seek time in seconds"
-        class="px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
-    <button (click)="manualSeek(seekInput.valueAsNumber)"
-        class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition">
-        Seek
-    </button>
-</div>
-</div> -->
--->

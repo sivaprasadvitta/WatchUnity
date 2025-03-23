@@ -2,6 +2,7 @@ import express from 'express';
 import http from 'http';
 import cors from 'cors';
 import { Server } from 'socket.io';  // <-- Use the named export "Server"
+import roomRouter from '../routers/room.router.js';
 
 const PORT = process.env.PORT || 5000;
 const app = express();
@@ -28,5 +29,7 @@ io.on('connection', (socket) => {
     console.log('Client disconnected:', socket.id);
   });
 });
+
+app.use('/rooms',roomRouter);
 
 server.listen(PORT, () => console.log(`Server running on port ${PORT}`));

@@ -2,10 +2,13 @@ import { Component } from '@angular/core';
 import { HeaderComponent } from '../components/header/header.component';
 import { VideoSyncComponent } from "../video-sync/video-sync.component";
 import { FormsModule } from '@angular/forms';
+import { ChatComponent } from '../components/chat/chat.component';
+import { HttpClientModule } from '@angular/common/http';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-room-page',
-  imports: [HeaderComponent, VideoSyncComponent,FormsModule],
+  imports: [HeaderComponent, VideoSyncComponent,FormsModule,ChatComponent],
   templateUrl: './room-page.component.html',
   styleUrl: './room-page.component.scss'
 })

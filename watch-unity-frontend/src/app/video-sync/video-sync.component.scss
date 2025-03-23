@@ -1,0 +1,93 @@
+.video-sync-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    padding: 2rem;
+    max-width: 700px;
+    // margin: 2rem auto;
+    background-color: #ffffff;
+    border-radius: 1rem;
+    box-shadow: 0 10px 25px rgba(8, 8, 8, 0.2);
+  }
+  
+  #player {
+    position: relative;
+    width: 100%;
+    max-width: 800px;
+    padding-top: 56.25%;
+    border-radius: 0.75rem;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  }
+  
+  #player iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 0.75rem;
+  }
+  
+  @media (max-width: 768px) {
+    .video-sync-container {
+      margin: 1rem;
+      padding: 1rem;
+      max-width: 95%;
+      border-radius: 0.5rem;
+    }
+    
+    #player {
+      max-width: 100%;
+      border-radius: 0.5rem;
+    }
+    
+    #player iframe {
+      border-radius: 0.5rem;
+    }
+  }
+  
+  @media (max-width: 640px) {
+    header {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 10;
+      margin: 0;
+      padding: 0.5rem 1rem;
+    }
+    .video-sync-container {
+      position: relative;
+      width: 100%;
+    //   height: 100vh;
+    height: 200px;
+      overflow: hidden;
+      margin: 0;
+      padding: 0;
+    }
+    #player {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-size: cover;
+      -moz-background-size: cover;
+      -webkit-background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+    }
+    #player iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+  }
+  
+  
+  
+

@@ -1,0 +1,11 @@
+<div class="pop-container">
+    <div *ngIf="task === 'create'">
+        <input type="text" placeholder="Enter your Name" [(ngModel)]="createrName" name="createrName">
+        <button (click)="onCreateRoom()">Create the Room</button>
+    </div>
+    <div *ngIf="task === 'join'">
+        <input type="text" placeholder="Enter Your Name" [(ngModel)]="joinerName" name="joinerName">
+        <input type="text" placeholder="Enter Room ID" [(ngModel)]="roomId" name="roomId">
+        <button (click)="onJoinRoom()">Join the Room</button>
+    </div>
+</div>
