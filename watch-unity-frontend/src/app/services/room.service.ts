@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class RoomService {
-  private apiUrl = `${'https://watchunity-backend.onrender.com'}/rooms`; //   http://localhost:5000
+  private apiUrl = `${'https://watchunity-backend.onrender.com'}/rooms`; //     http://localhost:5000
 
   constructor(private http: HttpClient) {}
 

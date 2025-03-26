@@ -1,11 +1,21 @@
-<div class="pop-container">
-    <div *ngIf="task === 'create'">
-        <input type="text" placeholder="Enter your Name" [(ngModel)]="createrName" name="createrName">
-        <button (click)="onCreateRoom()">Create the Room</button>
-    </div>
-    <div *ngIf="task === 'join'">
-        <input type="text" placeholder="Enter Your Name" [(ngModel)]="joinerName" name="joinerName">
-        <input type="text" placeholder="Enter Room ID" [(ngModel)]="roomId" name="roomId">
-        <button (click)="onJoinRoom()">Join the Room</button>
+<div
+    style="background: url('/assets/popup.jpg') no-repeat center center; background-size: cover; height: 100vh; display: flex; align-items: center; justify-content: center;">
+    <div class="pop-container">
+        <div *ngIf="task === 'create'">
+            <input type="text" placeholder="Enter your Name" [(ngModel)]="createrName">
+            <button (click)="onCreateRoom()" [disabled]="isLoading">
+                {{ isLoading ? 'Creating...' : 'Create the Room' }}
+            </button>
+            <div *ngIf="isLoading" class="loader"></div>
+        </div>
+        <div *ngIf="task === 'join'">
+            <input type="text" placeholder="Enter Your Name" [(ngModel)]="joinerName">
+            <input type="text" placeholder="Enter Room ID" [(ngModel)]="roomId">
+            <button (click)="onJoinRoom()" [disabled]="isLoading">
+                {{ isLoading ? 'Joining...' : 'Join the Room' }}
+            </button>
+            <div *ngIf="isLoading" class="loader"></div>
+        </div>
     </div>
 </div>
+

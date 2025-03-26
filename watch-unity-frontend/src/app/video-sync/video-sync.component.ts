@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, OnDestroy, OnChanges, SimpleChanges, inject, Host } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy, SimpleChanges } from '@angular/core';
 import { SocketService } from '../services/socket.service';
 import { ActivatedRoute } from '@angular/router';
 
@@ -9,63 +9,71 @@ declare var YT: any;
   templateUrl: './video-sync.component.html',
   styleUrls: ['./video-sync.component.scss']
 })
-export class VideoSyncComponent implements OnInit, OnDestroy, OnChanges {
-
-  roomId: string = '';
-
-
-  @Input() initialVideoUrl: string = 'M7lc1UVf-VE'; 
+export class VideoSyncComponent implements OnInit, OnDestroy {
+  @Input() videoIdFromRoom = '';
   @Input() isHost: boolean = false;
-
-  currentVideoId: string = this.initialVideoUrl;
+  roomId: string = '';
+  
+  currentVideoId: string | null = "";
   player: any;
   lastTime: number = 0;
   isSeeking: boolean = false;
-  pollIntervalId: any;
-
-  checker:string | null =''; //to check host or not
+  // When true, onPlayerStateChange will not send socket events.
+  suppressEvents: boolean = false;
 
   constructor(private socketService: SocketService, private route: ActivatedRoute) {
     this.route.paramMap.subscribe(params => {
-      console.log(params.get('id'));
       this.roomId = params.get('id') || '';
     });
   }
 
-  ngOnChanges(changes: SimpleChanges) {
-    if (changes['initialVideoUrl']) {
-      this.currentVideoId = changes['initialVideoUrl'].currentValue;
-      console.log('Video URL updated to:', this.currentVideoId);
-      if (this.player) {
-        this.player.loadVideoById(this.currentVideoId);
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['videoIdFromRoom']) {
+      const newVideoId = changes['videoIdFromRoom'].currentValue;
+      if (newVideoId && newVideoId !== this.currentVideoId) {
+        this.currentVideoId = newVideoId;
+        // console.log('ngOnChanges - videoIdFromRoom changed to:', newVideoId);
+        if (this.player) {
+          this.suppressEvents = true;
+          this.player.loadVideoById(newVideoId);
+        }
       }
     }
   }
-
+  
   ngOnInit(): void {
-    // Join the designated room
     this.socketService.joinRoom(this.roomId);
-    console.log('Joined room:', this.roomId);
+    // console.log('Joined room:', this.roomId);
 
-    // Set up socket listener for video control events
+    // Listen for video control events
     this.socketService.onVideoControl((data: any) => {
-      if (data.roomId !== this.roomId || !this.player) return;
-      console.log('Received video control event:', data);
+      if (data.roomId !== this.roomId) return;
+      // console.log('Received video control event:', data);
+      
       switch (data.action) {
+        case 'updateUrl':
+          // console.log('Processing updateUrl event with videoId:', data.videoId);
+          if (data.videoId && data.videoId !== this.currentVideoId) {
+            this.currentVideoId = data.videoId;
+            this.suppressEvents = true;
+            if (this.player) {
+              this.player.loadVideoById(data.videoId);
+            }
+          }
+          break;
         case 'play':
-          this.player.playVideo();
+          if (this.player) {
+            this.player.playVideo();
+          }
           break;
         case 'pause':
-          this.player.pauseVideo();
+          if (this.player) {
+            this.player.pauseVideo();
+          }
           break;
         case 'seek':
-          this.player.seekTo(data.time, true);
-          break;
-        case 'updateUrl':
-          console.log('Received updateUrl event with videoId:', data.videoId);
-          this.currentVideoId = data.videoId;
           if (this.player) {
-            this.player.loadVideoById(data.videoId);
+            this.player.seekTo(data.time, true);
           }
           break;
         default:
@@ -73,42 +81,16 @@ export class VideoSyncComponent implements OnInit, OnDestroy, OnChanges {
       }
     });
 
-    // check that that the user is host ot not first
-    this.checker = localStorage.getItem('isHost');
-    if(this.checker == 'true'){
-        this.isHost = true;
-    }
-
-    // For new joiners, request a sync from the host if not host
-    if (!this.isHost) {
-      setTimeout(() => {
-        console.log('Requesting sync from host');
-        this.socketService.socket.emit('requestSync', { roomId: this.roomId });
-      }, 1000);
-    } else {
-      // Host responds to sync requests
-      this.socketService.onRequestSync((data: any) => {
-        if (data.roomId === this.roomId && this.player) {
-          const currentTime = this.player.getCurrentTime();
-          console.log('Host responding with syncTime:', currentTime);
-          this.socketService.sendSyncTime({ roomId: this.roomId, time: currentTime });
-        }
-      });
-    }
-
     this.loadYouTubeAPI();
   }
 
   loadYouTubeAPI() {
-    // Check if the YT object and its Player constructor are available
     if ((window as any).YT && (window as any).YT.Player) {
       this.initPlayer();
     } else {
-      // Dynamically add the YouTube IFrame API script
       const tag = document.createElement('script');
       tag.src = 'https://www.youtube.com/iframe_api';
       document.body.appendChild(tag);
-      // onYouTubeIframeAPIReady will be called by the API once it's loaded
       (window as any).onYouTubeIframeAPIReady = () => {
         this.initPlayer();
       };
@@ -119,11 +101,8 @@ export class VideoSyncComponent implements OnInit, OnDestroy, OnChanges {
     let playerWidth = '640';
     let playerHeight = '390';
     if (window.innerWidth <= 640) {
-      // For mobile, set width to full window width and calculate height based on 16:9 ratio or use window height
       playerWidth = window.innerWidth.toString();
-      // For a 16:9 ratio:
       playerHeight = Math.round(window.innerWidth * (9 / 16)).toString();
-
     }
 
     this.player = new YT.Player('player', {
@@ -138,47 +117,76 @@ export class VideoSyncComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   onPlayerReady(event: any) {
-    console.log('Player ready');
-    // Optionally, you can auto-play or perform additional setup here
+    // console.log('Player ready');
   }
 
   onPlayerStateChange(event: any): void {
-    console.log('Player state change event:', event);
+    //  update, clear the flag and exit.
+    if (this.suppressEvents) {
+      this.suppressEvents = false;
+      return;
+    }
+
     const currentTime = this.player.getCurrentTime();
     if (this.isSeeking) return;
 
-    // Detect buffering state to infer a manual seek
-    if (event.data === YT.PlayerState.BUFFERING) {  // BUFFERING equals 3
+    // console.log('Player state changed, videoId:', event.target.options.videoId);
+
+    if (event.data === YT.PlayerState.PLAYING) {
+      this.socketService.sendVideoControl({
+        roomId: this.roomId,
+        action: 'play',
+        time: currentTime,
+        videoId: event.target.options.videoId
+      });
+    } 
+
+    else if (event.data === YT.PlayerState.BUFFERING) {
       const timeDiff = Math.abs(currentTime - this.lastTime);
-      console.log(`Last time: ${this.lastTime}, Current time: ${currentTime}, Diff: ${timeDiff}`);
-      if (timeDiff >= 2) {
-        console.log(`Detected manual seek from ${this.lastTime} to ${currentTime}`);
+      if (timeDiff >= 1) {
         this.isSeeking = true;
-        this.socketService.sendVideoControl({ roomId: this.roomId, action: 'seek', time: currentTime });
+        this.socketService.sendVideoControl({
+          roomId: this.roomId,
+          action: 'seek',
+          time: currentTime,
+          videoId: event.target.options.videoId
+        });
         this.lastTime = currentTime;
         setTimeout(() => { this.isSeeking = false; }, 500);
       } else {
         this.lastTime = currentTime;
       }
-    }
-    else if (event.data === YT.PlayerState.PLAYING) {
-      console.log(`Video playing at ${currentTime}`);
-      this.socketService.sendVideoControl({ roomId: this.roomId, action: 'play', time: currentTime });
-      // this.lastTime = currentTime;
-    }
+    } 
+    // else if (event.data === YT.PlayerState.PLAYING) {
+    //   this.socketService.sendVideoControl({
+    //     roomId: this.roomId,
+    //     action: 'play',
+    //     time: currentTime,
+    //     videoId: event.target.options.videoId
+    //   });
+    // } 
     else if (event.data === YT.PlayerState.PAUSED) {
-      console.log(`Video paused at ${currentTime}`);
-      this.socketService.sendVideoControl({ roomId: this.roomId, action: 'pause', time: currentTime });
-      // this.lastTime = currentTime;
+      this.socketService.sendVideoControl({
+        roomId: this.roomId,
+        action: 'pause',
+        time: currentTime,
+        videoId: event.target.options.videoId
+      });
     }
   }
 
   updateVideoUrl(newVideoId: string) {
+    // Update local player immediately and then emit to backend.
     this.currentVideoId = newVideoId;
     if (this.player) {
+      this.suppressEvents = true;
       this.player.loadVideoById(newVideoId);
     }
-    this.socketService.sendVideoControl({ roomId: this.roomId, action: 'updateUrl', videoId: newVideoId });
+    this.socketService.sendVideoControl({
+      roomId: this.roomId,
+      action: 'updateUrl',
+      videoId: newVideoId
+    });
   }
 
   ngOnDestroy(): void {
@@ -186,13 +194,9 @@ export class VideoSyncComponent implements OnInit, OnDestroy, OnChanges {
     this.socketService.socket.off('requestSync');
     this.socketService.socket.off('syncTime');
 
-    // clear our value
     localStorage.removeItem('adminName');
     localStorage.removeItem('joinerName');
     localStorage.removeItem('roomId');
     localStorage.removeItem('isHost');
   }
 }
-
-
-
