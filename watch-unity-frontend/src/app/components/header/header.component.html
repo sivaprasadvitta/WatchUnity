@@ -9,6 +9,9 @@
       placeholder="Enter YouTube Video ID" />
     <button (click)="updateVideo()">Update Video</button>
   </div>
+  <div>
+    <button [routerLink]="['/upload']"  (click)="onUpload()">upload Video</button>
+  </div>
   <div class="header-right">
     <!-- <img src="assets/user-icon.png" alt="User"> -->
     <span>{{ userName }}</span>

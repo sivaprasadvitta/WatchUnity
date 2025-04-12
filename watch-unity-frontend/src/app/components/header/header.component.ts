@@ -2,10 +2,11 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { SocketService } from '../../services/socket.service';
 import { FormsModule } from '@angular/forms';
 import { NgIf } from '@angular/common';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-header',
-  imports: [FormsModule, NgIf],
+  imports: [FormsModule, NgIf,RouterLink],
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.css']
 })
@@ -40,4 +41,6 @@ export class HeaderComponent {
       }
     }
   }
+
+  onUpload(){}
 }
